@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import reactor.core.publisher.Mono;
 
@@ -21,6 +22,7 @@ public class GlobalExceptionHandler {
             BranchNotFoundException.class,
             ProductNotFoundException.class
     })
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public Mono<ApiErrorResponse> handleNotFound(RuntimeException ex,
                                                  ServerHttpRequest request) {
         log.warn("Not found: {} - path={}", ex.getMessage(), request.getPath());
@@ -39,6 +41,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Mono<ApiErrorResponse> handleGeneric(Exception ex,
                                                 ServerHttpRequest request) {
         log.error("Unexpected error at path={}", request.getPath(), ex);
